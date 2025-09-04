@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Carrusel Infinito</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #111;
+      font-family: sans-serif;
+    }
+
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+      overflow: hidden;
+    }
+
+    .carousel {
+      display: flex;
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .slide {
+      min-width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide img {
+      width: 100%;
+      height: auto;
+      animation: zoom 6s ease-in-out infinite;
+    }
+
+    @keyframes zoom {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Flechas */
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      color: white;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 0.5rem;
+      cursor: pointer;
+      z-index: 2;
+      border: none;
+    }
+
+    .arrow-left {
+      left: 10px;
+    }
+
+    .arrow-right {
+      right: 10px;
+    }
+
+    /* Puntos de navegación */
+    .dots {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .dot {
+      height: 12px;
+      width: 12px;
+      margin: 0 4px;
+      background-color: #bbb;
+      border-radius: 50%;
+      display: inline-block;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .dot.active {
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+
+<div class="carousel-container">
+  <div class="carousel" id="carousel">
+    <div class="slide"><img src="multimedia/Top_mapi.jpg" alt="Imagen 1"></div>
+    <div class="slide"><img src="multimedia/Flores_tejidas.jpg" alt="Imagen 2"></div>
+    <div class="slide"><img src="multimedia/Amigurumi.jpg" alt="Imagen 3"></div>
+    <div class="slide"><img src="multimedia/Banner.jpg" alt="Imagen 4"></div>
+  </div>
+
+  <button class="arrow arrow-left" onclick="prevSlide()">&#10094;</button>
+  <button class="arrow arrow-right" onclick="nextSlide()">&#10095;</button>
+</div>
+
+<div class="dots" id="dots"></div>
+
+<script>
+  const carousel = document.getElementById('carousel');
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  const dotsContainer = document.getElementById('dots');
+
+  let currentIndex = 0;
+  let interval;
+
+  // Crear puntos
+  for (let i = 0; i < totalSlides; i++) {
+    const dot = document.createElement('span');
+    dot.classList.add('dot');
+    if (i === 0) dot.classList.add('active');
+    dot.addEventListener('click', () => goToSlide(i));
+    dotsContainer.appendChild(dot);
+  }
+
+  const updateDots = () => {
+    document.querySelectorAll('.dot').forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentIndex);
+    });
+  };
+
+  const goToSlide = (index) => {
+    currentIndex = index;
+    carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+    updateDots();
+    resetInterval();
+  };
+
+  const nextSlide = () => {
+    currentIndex = (currentIndex + 1) % totalSlides;
+    goToSlide(currentIndex);
+  };
+
+  const prevSlide = () => {
+    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+    goToSlide(currentIndex);
+  };
+
+  const startInterval = () => {
+    interval = setInterval(nextSlide, 5000); // Cambia cada 5 segundos
+  };
+
+  const resetInterval = () => {
+    clearInterval(interval);
+    startInterval();
+  };
+
+  startInterval();
+</script>
+
+</body>
+</html>
